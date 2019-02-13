@@ -23,6 +23,7 @@ services:
       - 9090:9090
     depends_on:
       - cadvisor
+      - kafka-adapter
     networks:
       - monitor-net
     restart: always
@@ -49,6 +50,31 @@ services:
     restart: always
     deploy:
       mode: global
+
+  kafka-adapter:
+    image: telefonica/prometheus-kafka-adapter:1.1.0
+    ports:
+      - 8000:8000
+    networks:
+      - monitor-net
+    restart: always
+    env_file:
+      - kafka-adapter/config.env
+    depends_on:
+      - kafka
+    deploy:
+      mode: global
+
+  kafka:
+    image: spotify/kafka
+    ports:
+      - 2181:2181
+      - 9092:9092
+    networks:
+      - monitor-net
+    restart: always
+    environment:
+      ADVERTISED_PORT: 9092
 
   alertmanager:
     image: prom/alertmanager
