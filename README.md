@@ -31,15 +31,17 @@ The 'kafka' branch contains and older version which is based on the orginal repo
 
 
 Open `docker-compose.yml` and change the 10.x.x.x IP addresses to your preferred network. For example:
-	[..]
-	ports:
-	  - 127.0.0.1:5001:9100
-
+```bash
+  [..]
+  ports:
+    - 127.0.0.1:5001:9100
+```
 Open `prometheus/prometheus.yml` and change the telegraf plugin targets to your host/s
-	[..]
-    	static_configs:
-      	  - targets: ['10.8.0.10:9273','10.8.0.22:9273']
-
+```bash
+  [..]
+  static_configs:
+    - targets: ['10.8.0.10:9273','10.8.0.22:9273']
+```
 Once configurations are done let's start it up. Run the following command:
 
     $ docker-compose up -d
@@ -62,8 +64,10 @@ If you would like to automate the installation of additional dashboards just cop
 
 ## Add Grafana Plugins
 The `/grafana/` directory contains a `Dockerfile` to build a new Grafana container with plugins included. You can add additional plugins with a comma separated list
-	ARG GF_INSTALL_PLUGINS="grafana-piechart-panel"
 
+```bash
+	ARG GF_INSTALL_PLUGINS="grafana-piechart-panel"
+```
 
 
 ## Alerting
