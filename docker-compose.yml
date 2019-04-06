@@ -21,7 +21,7 @@ services:
       - '--web.console.libraries=/usr/share/prometheus/console_libraries'
       - '--web.console.templates=/usr/share/prometheus/consoles'
     ports:
-      - 127.0.0.1:5000:9090
+      - 10.8.0.1:5000:9090
     links:
       - alertmanager:alertmanager
     networks:
@@ -40,17 +40,15 @@ services:
       - --collector.filesystem.ignored-mount-points
       - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
     ports:
-      - 127.0.0.1:5001:9100
+      - 10.8.0.1:5001:9100
     networks:
       - back-tier
     restart: always
-    deploy:
-      mode: global
 
   alertmanager:
     image: prom/alertmanager
     ports:
-      - 127.0.0.1:5002:9093
+      - 10.8.0.1:5002:9093
     volumes:
       - ./alertmanager/:/etc/alertmanager/
     networks:
@@ -61,12 +59,12 @@ services:
       - '--storage.path=/alertmanager'
 
   grafana:
-    image: grafana/grafana
+    image: foexle/grafana-plugins
     user: "104"
     depends_on:
       - prometheus
     ports:
-      - 127.0.0.1:5004:3000
+      - 10.8.0.1:5004:3000
     volumes:
       - grafana_data:/var/lib/grafana
       - ./grafana/provisioning/:/etc/grafana/provisioning/

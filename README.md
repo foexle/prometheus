@@ -30,6 +30,16 @@ Clone the project locally to your Docker host.
 The 'kafka' branch contains and older version which is based on the orginal repository + kafka exporter.
 
 
+Open `docker-compose.yml` and change the 10.x.x.x IP addresses to your preferred network. For example:
+	[..]
+	ports:
+	  - 127.0.0.1:5001:9100
+
+Open `prometheus/prometheus.yml` and change the telegraf plugin targets to your host/s
+	[..]
+    	static_configs:
+      	  - targets: ['10.8.0.10:9273','10.8.0.22:9273']
+
 Once configurations are done let's start it up. Run the following command:
 
     $ docker-compose up -d
@@ -72,8 +82,8 @@ The Slack configuration requires to build a custom integration.
 * Copy the Webhook URL into the `alertmanager/config.yml` URL section
 * Fill in Slack username and channel
 
-View Prometheus alerts `http://<Host IP Address>:9090/alerts`
-View Alert Manager `http://<Host IP Address>:9093`
+View Prometheus alerts `http://<Host IP Address>:5000/alerts`
+View Alert Manager `http://<Host IP Address>:5002`
 
 ### Test Alerts
 A quick test for your alerts is to stop a service. Stop the node_exporter container and you should notice shortly the alert arrive in Slack. Also check the alerts in both the Alert Manager and Prometheus Alerts just to understand how they flow through the system.
@@ -88,11 +98,15 @@ This project is intended to be a quick-start to get up and running with Docker a
 Since this is a template to get started Prometheus and Alerting services are exposing their ports to allow for easy troubleshooting and understanding of how the stack works.
 
 ## Production Security:
-Here are just a couple security considerations for this stack to help you get started.
+
+As you see in the `docker-compose.yml` file all ports are configured to 10.8.0.1 because all my devices are communicating through a VPN. In this case you don't need to secure all peaces.
+
+In addition, here are just a couple security considerations for this stack to help you get started.
 * Remove the published ports from Prometheus and Alerting servicesi and only allow Grafana to be accessed
 * Enable SSL for Grafana with a Proxy such as [jwilder/nginx-proxy](https://hub.docker.com/r/jwilder/nginx-proxy/) or [Traefik](https://traefik.io/) with Let's Encrypt
 * Add user authentication via a Reverse Proxy [jwilder/nginx-proxy](https://hub.docker.com/r/jwilder/nginx-proxy/) or [Traefik](https://traefik.io/) for services cAdvisor, Prometheus, & Alerting as they don't support user authenticaiton
 * Terminate all services/containers via HTTPS/SSL/TLS
+
 
 # Troubleshooting
 It appears some people have reported no data appearing in Grafana. If this is happening to you be sure to check the time range being queried within Grafana to ensure it is using Today's date with current time.
