@@ -28,23 +28,6 @@ services:
       - back-tier
     restart: always
 
-  node-exporter:
-    image: prom/node-exporter
-    volumes:
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /:/rootfs:ro
-    command: 
-      - '--path.procfs=/host/proc' 
-      - '--path.sysfs=/host/sys'
-      - --collector.filesystem.ignored-mount-points
-      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
-    ports:
-      - 10.8.0.1:5001:9100
-    networks:
-      - back-tier
-    restart: always
-
   alertmanager:
     image: prom/alertmanager
     ports:
@@ -75,3 +58,17 @@ services:
       - front-tier
     restart: always
 
+  telegraf:
+    image: telegraf
+    environment:
+      - HOST_PROC=/host/proc
+      - HOST_SYS=/rootfs/sys
+      - HOST_ETC=/rootfs/etc
+    volumes:
+      - /proc/:/host/proc:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./telegraf/:/etc/telegraf/
+      - /sys:/rootfs/sys:ro
+      - /etc:/rootfs/etc:ro
+    networks:
+      - back-tier
